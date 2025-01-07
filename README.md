@@ -8,4 +8,8 @@ golang with postgresQL REST API (go-fiber)
 
 # Get a deeper look of how gorm works
 
-[gorm](https://gorm.io/docs/index.html)
+[GORM](https://gorm.io/docs/index.html)
+
+# To set up the db in postgresQL follow just 2 steps on the terminal 
+* `psql -u <username>`
+* `CREATE DATABASE <db_name>;`

@@ -98,6 +98,36 @@ func (r *Respository) DeleteBook(context *fiber.Ctx) error {
 	return nil
 }
 
+func (r *Respository) GetBookByID(context *fiber.Ctx) error {
+
+	// Get id from the route
+	id := context.Params("id")
+
+	// handling empty id
+	if id == "" {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "id is required",
+		})
+		return nil
+	}
+	book := &models.Books{}
+
+	// Find the book with the specified id
+	err := r.DB.Where("id = ?", id).First(book).Error
+
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "could not find the book",
+		})
+		return err
+	}
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "book fetched successfully",
+		"data":    book,
+	})
+	return nil
+}
+
 // SetupRoutes is a struct method
 func (r *Respository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
@@ -131,6 +161,12 @@ func main() {
 
 	if err != nil {
 		log.Fatal("could not connect to the database")
+	}
+
+	// Migrate the schema
+	err = models.MigrateBooks(db)
+	if err != nil {
+		log.Fatal("could not migrate the schema")
 	}
 
 	// r becomes a struct of type repository
